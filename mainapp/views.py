@@ -9,4 +9,8 @@ def login(request):
 	return render(request,'mainapp/login.html')
 
 def home(request):
-	return render(request,'mainapp/home.html')	
+	return render(request,'mainapp/home.html')
+
+def signup(request):
+	return render(request,'mainapp/signup.html')
+
