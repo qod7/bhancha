@@ -108,7 +108,7 @@ def browsefood(request):
         item = {}
         item['id'] = fooditem.pk
         item['name'] = fooditem.name
-        item['image_id'] = 'http://bhanchhaapp.ktmlive.com/media/'+fooditem.image.image.name
+        item['image_id'] = 'http://bhancha.com/media/'+fooditem.image.image.name
         item['cooks']=[]
         # find all the cooks for the food
         dishes = Dish.objects.filter(food=fooditem, enabled=True)
@@ -154,7 +154,7 @@ def browsecook(request):
             food = {}
             food['id'] = dish.food.pk
             food['name'] = dish.food.name
-            food['image_id'] = 'http://bhanchhaapp.ktmlive.com/media/'+dish.food.image.image.name
+            food['image_id'] = 'http://bhancha.com/media/'+dish.food.image.image.name
             item['foods'].append(food)
         output.append(item)
     return HttpResponse(json.dumps(output))
