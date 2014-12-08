@@ -1,4 +1,5 @@
 sudo chmod -R 755 *
+sudo killall gunicorn
 git reset --hard HEAD
 git pull
 
