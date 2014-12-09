@@ -125,7 +125,21 @@ class Order(models.Model):
 
 class Session(models.Model):
     user = models.ForeignKey(User)
-    sessionid = models.CharField(max_length=20)
+    sessionid = models.CharField(max_length=20, default='', unique=True)
+
+    def generateRandom(self):
+        from django.db import IntegrityError
+        from django.utils.crypto import get_random_string
+
+        self.sessionid = get_random_string(length=20)
+        success = False
+        while not success:
+            try:
+                self.save()
+            except IntegrityError:
+                self.sessionid = get_random_string(length=16)
+            else:
+                success = True
 
     def __str__(self):
         return "Session for "+self.user.first_name+" "+self.user.last_name
