@@ -7,6 +7,7 @@ from django.contrib import auth
 
 from django.contrib.auth.models import User
 from mainapp.models import Media, Food, Dish, CookInfo, Order
+from mainapp.models import Session
 
 # Create your views here.
 class LoginForm(forms.Form):
@@ -179,6 +180,7 @@ def browseorder(request):
 
 
 def logincheck(request):
+    import json
     username = request.GET.get("user",False)
     password = request.GET.get("pass",False)
     if username is False:
@@ -188,6 +190,18 @@ def logincheck(request):
         raise Http404
 
     user = authenticate(username=username, password=password)
-    if user is not None:
-        return HttpResponse("Login successful")
-    return HttpResponse("Login failed with "+username+" and "+password)
+    if user is None:
+        output = {"login": "no"}
+        return HttpResponse(json.dumps(output))
+    # Create some session ID for the user
+    session,created = Session.objects.get_or_create(user=user)
+    session.generateRandom()
+
+    output = {
+        "login": "yes",
+        "name": user.first_name+" "+user.last_name,
+        "email": user.email,
+        "username": user.username,
+        "tag": session.sessionid
+        }
+    return HttpResponse(json.dumps(output))
