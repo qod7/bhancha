@@ -38,7 +38,30 @@ def home(request):
             return redirect('home')
 
 def dishes(request):
-    return render(request,'mainapp/dishes.html')
+    if(request.method=='GET'):
+        if(not(request.user.is_authenticated())):
+            return redirect('login')
+        else:
+            dishes=Dish.objects.filter(cook_id=request.user.id)
+            return render(request,'mainapp/dishes.html',{'dishes':dishes})
+    else:
+        # Dishes list to enable
+        str_dishes_list=request.POST.getlist('dishes')
+        int_dishes_list=[]
+        for items in str_dishes_list:
+            int_dishes_list.append(int(items))
+
+        # Cook dishes list
+        dishes=Dish.objects.filter(cook_id=request.user.id)
+
+        for dish in dishes:
+            if dish.id in int_dishes_list:
+                dish.enabled=True
+            else:
+                dish.enabled=False
+            dish.save()
+            
+        return redirect('dishes')
 
 def orders(request):
     orders=Order.objects.filter(dish__cook_id=request.user.id)
