@@ -7,6 +7,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from mainapp.models import Media, Food, Dish, CookInfo, Order
 
+
 # Create your views here.
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=30,widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -78,20 +79,20 @@ def index(request):
         return render(request,'mainapp/index.html')
 
 def home(request):
-        if(request.method=='GET'):
-                # Getting the orders for the cook which are ordered
-                orders=Order.objects.filter(dish__cook_id=request.user.id,status='ORD')
-                if(orders):
-                        # Only a single order is show at a time
-                        order=orders[0]
-                        return render(request,'mainapp/home.html',{'order':order})
-                else:
-                        return render(request,'mainapp/home.html')
+    if(request.method=='GET'):
+            # Getting the orders for the cook which are ordered
+            orders=Order.objects.filter(dish__cook_id=request.user.id,status='ORD')
+            if(orders):
+                    # Only a single order is show at a time
+                    order=orders[0]
+                    return render(request,'mainapp/home.html',{'order':order})
+            else:
+                    return render(request,'mainapp/home.html')
 
 def order(request):
-        if(request.method=='POST'):
-                submitButton=request.POST['submitButton']
-                return HttpResponse(submitButton)
+    if(request.method=='POST'):
+            submitButton=request.POST['submitButton']
+            return HttpResponse(submitButton)
 
 def logout(request):
     auth.logout(request)
