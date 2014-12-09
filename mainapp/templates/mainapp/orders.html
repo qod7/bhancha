@@ -1,0 +1,20 @@
+{% extends "mainapp/home.html" %}
+
+{% block page %}
+	<table class="table table-striped">
+	<tr>
+		<th>S.N.</th>
+		<th>Customer</th>
+		<th>Dish</th>
+		<th>Quantity</th>
+	</tr>
+	{% for order in orders %}
+		<tr>
+			<td>{{forloop.counter}}</td>
+			<td>{{order.customer}}</td>
+			<td>{{order.dish}}</td>
+			<td>{{order.quantity}}</td>
+		</tr>
+	{% endfor %}
+	</table>
+{% endblock %}

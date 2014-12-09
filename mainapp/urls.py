@@ -4,6 +4,8 @@ from mainapp import views
 urlpatterns = patterns('',
         url(r'^$', views.index, name='index'),
         url(r'^home/', views.home, name='home'),
+        url(r'^dishes/', views.dishes, name='dishes'),
+        url(r'^orders/', views.orders, name='orders'),
         url(r'^login/', views.login, name='login'),
         url(r'^logincheck/', views.logincheck, name='logincheck'),
         url(r'^logout/', views.logout, name='logout'),

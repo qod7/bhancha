@@ -9,70 +9,13 @@ from django.contrib.auth.models import User
 from mainapp.models import Media, Food, Dish, CookInfo, Order
 from mainapp.models import Session
 
+
 # Create your views here.
-class LoginForm(forms.Form):
-    username=forms.CharField(max_length=30,widget=forms.TextInput(attrs={'class':'form-control'}))
-    password=forms.CharField(max_length=30,widget=forms.PasswordInput(attrs={'class':'form-control'}))
-
 def login(request):
-    if(request.method== 'POST'):
-        form=LoginForm(request.POST)
-        if(form.is_valid()):
-            user=auth.authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-            if user is not None:
-                if user.is_active:
-                    auth.login(request,user)
-                    return redirect('mainapp:home')
-                else:
-                    # Disabled account
-                    pass
-            else:
-                new_form=LoginForm()
-                return render(request, 'mainapp/login.html',{'form':form,'message':'Wrong Username or password'})
-    else:
-        form=LoginForm()
-        return render(request, 'mainapp/login.html',{'form':form})
+    return render(request, 'mainapp/login.html')
 
-class SignupForm(forms.ModelForm):
-    class Meta:
-        model= auth.models.User
-        fields= ['username','email','first_name','last_name','password']
-        widgets = {
-            'username': forms.TextInput(attrs={'class':'form-control'}),
-            'email': forms.TextInput(attrs={'class':'form-control'}),
-            'first_name': forms.TextInput(attrs={'class':'form-control'}),
-            'last_name': forms.TextInput(attrs={'class':'form-control'}),
-            'password': forms.PasswordInput(attrs={'class':'form-control'}),
-        }
-
-    repassword=forms.CharField(max_length=30,widget=forms.PasswordInput(attrs={'class':'form-control'}))
 
 def signup(request):
-    if (request.method== 'POST'):
-        form=SignupForm(request.POST)
-        if (form.is_valid()):
-            username=form.cleaned_data['username']
-            email=form.cleaned_data['email']
-            password=form.cleaned_data['password']
-            repassword=form.cleaned_data['repassword']
-            first_name=form.cleaned_data['first_name']
-            last_name=form.cleaned_data['last_name']
-
-            if(password!=repassword):
-                return render(request,'mainapp/signup.html',{'form':form})
-
-            user = auth.models.User.objects.create_user(username, email, password)
-            user.first_name=first_name
-            user.last_name=last_name
-            user.save()
-
-            new_form=SignupForm()
-            user=auth.authenticate(username=username, password=password)
-            return redirect('mainapp:home')
-
-        else:
-            return render(request,'mainapp/signup.html',{'form':form,'message':'Invalid form'})
-    form=SignupForm()
     return render(request,'mainapp/signup.html',{'form':form})
 
 def index(request):
@@ -80,24 +23,36 @@ def index(request):
         return render(request,'mainapp/index.html')
 
 def home(request):
-        if(request.method=='GET'):
-                # Getting the orders for the cook which are ordered
-                orders=Order.objects.filter(dish__cook_id=request.user.id,status='ORD')
-                if(orders):
-                        # Only a single order is show at a time
-                        order=orders[0]
-                        return render(request,'mainapp/home.html',{'order':order})
-                else:
-                        return render(request,'mainapp/home.html')
+    if(request.method=='GET'):
+        if(not(request.user.is_authenticated())):
+            return redirect('login')
+        else:
+            cook=CookInfo.objects.filter(cook_id=request.user.id)[0]
+            if(cook):
+                return render(request,'mainapp/home.html',{'cook':cook})
+    else:
+        data=request.POST
+        cook=CookInfo.objects.filter(cook_id=data['cookid'])[0]
+        if(cook):
+            cook.status=data['status']
+            cook.save()
+            return redirect('home')
+
+def dishes(request):
+    return render(request,'mainapp/dishes.html')
+
+def orders(request):
+    orders=Order.objects.filter(dish__cook_id=request.user.id)
+    return render(request,'mainapp/orders.html',{'orders':orders})
 
 def order(request):
-        if(request.method=='POST'):
-                submitButton=request.POST['submitButton']
-                return HttpResponse(submitButton)
+    if(request.method=='POST'):
+            submitButton=request.POST['submitButton']
+            return HttpResponse(submitButton)
 
 def logout(request):
     auth.logout(request)
-    return redirect('mainapp:index')
+    return redirect('index')
 
 def browsefood(request):
     import json
