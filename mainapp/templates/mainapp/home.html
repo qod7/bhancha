@@ -2,95 +2,101 @@
 
 {% block content %}
 <section id="container" class="">
-  <!--header start-->
-  <header class="header white-bg">
-      <div class="sidebar-toggle-box">
-          <div data-original-title="" data-placement="right" class="icon-reorder tooltips"></div>
-      </div>
-      <!--logo start-->
-      <a href="{% url 'home' %}" class="logo" >Bhancha</a>
-      <!--logo end-->
-      
-      <div class="top-nav ">
-          <ul class="nav pull-right top-menu">
-              <li class="dropdown">
-                  <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                      <img alt="" src="img/avatar1_small.jpg">
-                      <span class="username">Jhon Doue</span>
-                      <b class="caret"></b>
-                  </a>
-                  <ul class="dropdown-menu extended logout">
-                      <div class="log-arrow-up"></div>
-                      <li><a href="#"><i class=" icon-suitcase"></i>Profile</a></li>
-                      <li><a href="#"><i class="icon-cog"></i> Settings</a></li>
-                      <li><a href="#"><i class="icon-bell-alt"></i> Notification</a></li>
-                      <li><a href="login.html"><i class="icon-key"></i> Log Out</a></li>
-                  </ul>
-              </li>
-              <!-- user login dropdown end -->
-          </ul>
-      </div>
-  </header>
-  <!--header end-->
-  <!--sidebar start-->
-  <aside>
-      <div id="sidebar"  class="nav-collapse ">
-          <!-- sidebar menu start-->
-          <ul class="sidebar-menu" id="nav-accordion">
-            <li>
-                <a href="{% url 'home' %}">
-                    <i class="icon-home"></i>
-                    <span>Status</span>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'dishes' %}">
-                    <i class="icon-food"></i>
-                    <span>Dishes</span>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'orders' %}">
-                    <i class="icon-list"></i>
-                    <span>Orders</span>
-                </a>
-            </li>
-          </ul>
-          <!-- sidebar menu end-->
-      </div>
-  </aside>
-  <!--sidebar end-->
-  <!--main content start-->
-  <section id="main-content">
-      <section class="wrapper site-min-height">
-          {% block page %}
-          <!-- page start-->
-          <form class="form-horizontal col-sm-6 col-sm-offset-3" role="form" action="{% url 'home' %}">
-              <div class="form-group">
-                  <label for="inputEmail3" class="col-sm-2 control-label">Status</label>
-                  <div class="col-sm-10">
-                      <select class="form-control">
-                          <option>Free</option>
-                          <option>Busy</option>
-                      </select>
-                  </div>
-              </div>
-              <button type="submit" class="btn btn-default col-sm-offset-2">Save</button>
-          </form>
-          <!-- page end-->
-          {% endblock %}
-      </section>
-  </section>
-  <!--main content end-->
-  <!--footer start-->
-  <footer class="site-footer">
-      <div class="text-center">
-          2013 &copy; FlatLab by VectorLab.
-          <a href="#" class="go-top">
-              <i class="icon-angle-up"></i>
-          </a>
-      </div>
-  </footer>
-  <!--footer end-->
-</section>
+    <!--header start-->
+    <header class="header white-bg">
+        <div class="sidebar-toggle-box">
+            <div data-original-title="" data-placement="right" class="icon-reorder tooltips"></div>
+        </div>
+        <!--logo start-->
+        <a href="{% url 'home' %}" class="logo" >Bhancha</a>
+        <!--logo end-->
+        
+        <div class="top-nav ">
+            <ul class="nav pull-right top-menu">
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <img alt="" src="img/avatar1_small.jpg">
+                        <span class="username">{{user.username}}</span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu extended logout">
+                        <div class="log-arrow-up"></div>
+                        <li><a href="#"><i class=" icon-suitcase"></i>Profile</a></li>
+                        <li><a href="#"><i class="icon-cog"></i> Settings</a></li>
+                        <li><a href="#"><i class="icon-bell-alt"></i> Notification</a></li>
+                        <li><a href="{% url 'logout' %}"><i class="icon-key"></i> Log Out</a></li>
+                    </ul>
+                </li>
+                <!-- user login dropdown end -->
+            </ul>
+        </div>
+    </header>
+    <!--header end-->
+    <!--sidebar start-->
+    <aside>
+        <div id="sidebar"  class="nav-collapse ">
+            <!-- sidebar menu start-->
+            <ul class="sidebar-menu" id="nav-accordion">
+                <li>
+                    <a href="{% url 'home' %}">
+                        <i class="icon-home"></i>
+                        <span>Status</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'dishes' %}">
+                        <i class="icon-food"></i>
+                        <span>Dishes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'orders' %}">
+                        <i class="icon-list"></i>
+                        <span>Orders</span>
+                    </a>
+                </li>
+            </ul>
+            <!-- sidebar menu end-->
+        </div>
+    </aside>
+    <!--sidebar end-->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper site-min-height">
+            {% block page %}
+            <!-- page start-->
+            <form class="form-horizontal col-sm-6 col-sm-offset-3" role="form" action="{% url 'home' %}" method="POST">
+                {% csrf_token %}
+                <input name="cookid" type="hidden" value="{{cook.id}}">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Status</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="status">
+                            <option {% if cook.status == 'FREE' %}
+                                selected="selected"
+                            {% endif %} >FREE</option>
+                            <option {% if cook.status == 'BUSY' %}
+                                selected="selected"
+                            {% endif %} >BUSY</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary col-sm-offset-2">Save</button>
+            </form>
+            <!-- page end-->
+            {% endblock %}
+        </section>
+    </section>
+    <!--main content end-->
+    <!--footer start-->
+    <footer class="site-footer">
+        <div class="text-center">
+            2013 &copy; FlatLab by VectorLab.
+            <a href="#" class="go-top">
+                <i class="icon-angle-up"></i>
+            </a>
+        </div>
+    </footer>
+    <!--footer end-->
+    </section>
 {% endblock %}
