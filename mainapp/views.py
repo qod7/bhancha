@@ -105,6 +105,8 @@ def browsefood(request):
     food = Food.objects.all()
     output = []
     for fooditem in food:
+        if Dish.objects.filter(food=fooditem, enabled=True).count() == 0:
+            continue
         item = {}
         item['id'] = fooditem.pk
         item['name'] = fooditem.name
