@@ -89,6 +89,12 @@ def home(request):
             else:
                     return render(request,'mainapp/home.html')
 
+def dishes(request):
+    return render(request,'mainapp/dishes.html')
+
+def orders(request):
+    return render(request,'mainapp/orders.html')
+
 def order(request):
     if(request.method=='POST'):
             submitButton=request.POST['submitButton']
