@@ -175,7 +175,8 @@ def sessioncheck(request):
     try:
         session = Session.objects.get(sessionid=sessionid)
     except:
-        raise Http404  # Show error in case of error
+        output = {"login": "no"}
+        return HttpResponse(json.dumps(output))
 
     user = session.user
     output = {
