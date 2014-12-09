@@ -4,7 +4,6 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from django.contrib.auth import authenticate, login
 from django.contrib import auth
-
 from django.contrib.auth.models import User
 from mainapp.models import Media, Food, Dish, CookInfo, Order
 from mainapp.models import Session
@@ -145,7 +144,15 @@ def logincheck(request):
         raise Http404
 
     user = authenticate(username=username, password=password)
+    found = True
     if user is None:
+        if User.objects.filter(email=username).count() == 0:
+            found = False
+        else:
+            user = User.objects.get(email=username)
+            if not user.check_password(password):
+                found = False
+    if not found:
         output = {"login": "no"}
         return HttpResponse(json.dumps(output))
     # Create some session ID for the user
