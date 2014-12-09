@@ -140,6 +140,8 @@ def browsecook(request):
     cookinfos = CookInfo.objects.filter(status=CookInfo.FREE)
     output = []
     for cookinfo in cookinfos:
+        if Dish.objects.filter(cook=cook, enabled=True).count() == 0:
+            continue
         cook = cookinfo.cook
         item = {}
         item['id'] = cook.pk
