@@ -81,14 +81,7 @@ def index(request):
 
 def home(request):
     if(request.method=='GET'):
-            # Getting the orders for the cook which are ordered
-            orders=Order.objects.filter(dish__cook_id=request.user.id,status='ORD')
-            if(orders):
-                    # Only a single order is show at a time
-                    order=orders[0]
-                    return render(request,'mainapp/home.html',{'order':order})
-            else:
-                    return render(request,'mainapp/home.html')
+        return render(request,'mainapp/home.html')
 
 def dishes(request):
     return render(request,'mainapp/dishes.html')
