@@ -7,7 +7,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from mainapp.models import Media, Food, Dish, CookInfo, Order
 from mainapp.models import Session
-
+import json
 
 # Create your views here.
 def login(request):
@@ -134,7 +134,7 @@ def browseorder(request):
 
 
 def logincheck(request):
-    import json
+
     username = request.GET.get("user",False)
     password = request.GET.get("pass",False)
     if username is False:
@@ -156,7 +156,7 @@ def logincheck(request):
         output = {"login": "no"}
         return HttpResponse(json.dumps(output))
     # Create some session ID for the user
-    session,created = Session.objects.get_or_create(user=user)
+    session, created = Session.objects.get_or_create(user=user)
     session.generateRandom()
 
     output = {
@@ -166,4 +166,77 @@ def logincheck(request):
         "username": user.username,
         "tag": session.sessionid
         }
+    return HttpResponse(json.dumps(output))
+
+def sessioncheck(request):
+    sessionid = request.GET.get("tag", False)
+    if sessionid is False:
+        raise Http404
+    try:
+        session = Session.objects.get(sessionid=sessionid)
+    except:
+        raise Http404  # Show error in case of error
+
+    user = session.user
+    output = {
+        "login": "yes",
+        "name": user.first_name+" "+user.last_name,
+        "email": user.email,
+        "username": user.username,
+        "tag": session.sessionid
+        }
+    return HttpResponse(json.dumps(output))
+
+
+def makeorder(request):
+    sessionid = request.GET.get("tag", False)
+    if sessionid is False:
+        raise Http404
+    try:
+        session = Session.objects.get(sessionid=sessionid)
+    except:
+        raise Http404  # Show error in case of error
+
+    user = session.user
+
+    # Now try to get the food and cook ID
+    return HttpResponse("Hello world")
+
+def browseorder(request):
+    # I have used the following lines of code 3 times in this view.
+    # Maybe i should create a function instead of writing this comment
+    # On second thought, Nah...
+
+    from datetime import datetime, timedelta
+    from django.utils import timezone
+    from django.utils.timesince import timesince
+
+    sessionid = request.GET.get("tag", False)
+    if sessionid is False:
+        raise Http404
+    try:
+        session = Session.objects.get(sessionid=sessionid)
+    except:
+        raise Http404  # Show error in case of error
+
+    user = session.user
+
+    # Search for orders of this user
+    orders = Order.objects.filter(customer=user)
+    output = []
+    for order in orders:
+        orderinfo = {}
+        cook = order.dish.cook
+        orderinfo["cook"] = cook.first_name+" "+cook.last_name
+        orderinfo["food"] = order.dish.food.name
+        orderinfo["status"] = order.get_status_display()
+
+        now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+        difference = now - order.order_placed
+        if difference <= timedelta(minutes=1):
+            orderinfo["ordered"] = 'just now'
+        else:
+            orderinfo["ordered"] = '%(time)s ago' % {'time': timesince(order.order_placed).split(', ')[0]}
+            orderinfo["ordered"] = orderinfo["ordered"].replace("\u00a0"," ")
+        output.append(orderinfo)
     return HttpResponse(json.dumps(output))
