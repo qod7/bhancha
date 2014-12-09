@@ -1,16 +1,24 @@
 {% extends "mainapp/base.html" %}
+{% load staticfiles %}
+
+{% block bodytags %}
+    style="background:url('{% static "mainapp/images/slider/bg1.jpeg" %}') no-repeat center center fixed;background-size:cover;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;"
+{% endblock %}
 
 {% block content %}
 <div class="container">
-	<form class="form-signin" action="">
-		<h2 class="form-signin-heading">registration now</h2>
+	<form class="form-signin" action="" style="margin-top:80px; margin-bottom:80px;">
+		<h2 class="form-signin-heading">register now</h2>
 		<div class="login-wrap">
-		    <p>Enter your personal details below</p>
+		    <p>Enter your details below</p>
 		    <input type="text" class="form-control" placeholder="Full Name" autofocus>
 		    <input type="text" class="form-control" placeholder="Address" autofocus>
 		    <input type="text" class="form-control" placeholder="Email" autofocus>
 		    <input type="text" class="form-control" placeholder="City/Town" autofocus>
-		    <div class="radios">
+		    <div class="radios" style="padding-top:0px;">
 		        <label class="label_radio col-lg-6 col-sm-6" for="radio-01">
 		            <input name="sample-radio" id="radio-01" value="1" type="radio" checked /> Male
 		        </label>
@@ -18,8 +26,6 @@
 		            <input name="sample-radio" id="radio-02" value="1" type="radio" /> Female
 		        </label>
 		    </div>
-
-		    <p> Enter your account details below</p>
 		    <input type="text" class="form-control" placeholder="User Name" autofocus>
 		    <input type="password" class="form-control" placeholder="Password">
 		    <input type="password" class="form-control" placeholder="Re-type Password">

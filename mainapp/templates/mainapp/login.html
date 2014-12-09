@@ -1,8 +1,17 @@
 {% extends "mainapp/base.html" %}
+{% load staticfiles %}
+
+{% block bodytags %}
+    style="background:url('{% static "mainapp/images/slider/bg1.jpeg" %}') no-repeat center center fixed;background-size:cover;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;"
+{% endblock %}
+
 
 {% block content %}
 <div class="container">
-  <form class="form-signin" action="">
+  <form class="form-signin" action="" >
     <h2 class="form-signin-heading">Sign in now</h2>
     <div class="login-wrap">
         <input type="text" class="form-control" placeholder="Username" autofocus>
