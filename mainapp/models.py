@@ -121,3 +121,11 @@ class Order(models.Model):
 
     def __str__(self):
         return "Order by "+self.customer.first_name+" "+self.customer.last_name+" for "+self.dish.__str__()
+
+
+class Session(models.Model):
+    user = models.ForeignKey(User)
+    sessionid = models.CharField(max_length=20)
+
+    def __str__(self):
+        return "Session for "+self.user.first_name+" "+self.user.last_name

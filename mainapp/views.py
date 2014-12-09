@@ -1,7 +1,8 @@
 from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-
+from django.http import Http404
+from django.contrib.auth import authenticate, login
 from django.contrib import auth
 
 from django.contrib.auth.models import User
@@ -175,3 +176,18 @@ def browseorder(request):
     except:
         return HttpResponse("Permission denied")
     return HttpResponse(json.dumps(output))
+
+
+def logincheck(request):
+    username = request.GET.get("user",False)
+    password = request.GET.get("pass",False)
+    if username is False:
+        raise Http404
+
+    if password is False:
+        raise Http404
+
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        return HttpResponse("Login successful")
+    return HttpResponse("Login failed with "+username+" and "+password)
