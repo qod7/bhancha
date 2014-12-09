@@ -42,7 +42,12 @@
                     <ul class="nav navbar-nav">
                         <li><a href="{% url 'index' %}">Home</a></li>
                         <li><a href="">About Us</a></li>
-                        <li><a href="{% url 'login' %}">Login</a></li>
+                        
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'home' %}">Dashboard</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">Login</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div><!--/.container-->

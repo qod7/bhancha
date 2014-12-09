@@ -23,9 +23,12 @@ def index(request):
 
 def home(request):
     if(request.method=='GET'):
-        cook=CookInfo.objects.filter(cook_id=request.user.id)[0]
-        if(cook):
-            return render(request,'mainapp/home.html',{'cook':cook})
+        if(not(request.user.is_authenticated())):
+            return redirect('login')
+        else:
+            cook=CookInfo.objects.filter(cook_id=request.user.id)[0]
+            if(cook):
+                return render(request,'mainapp/home.html',{'cook':cook})
     else:
         data=request.POST
         cook=CookInfo.objects.filter(cook_id=data['cookid'])[0]
@@ -38,7 +41,8 @@ def dishes(request):
     return render(request,'mainapp/dishes.html')
 
 def orders(request):
-    return render(request,'mainapp/orders.html')
+    orders=Order.objects.filter(dish__cook_id=request.user.id)
+    return render(request,'mainapp/orders.html',{'orders':orders})
 
 def order(request):
     if(request.method=='POST'):
