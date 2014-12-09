@@ -29,7 +29,7 @@
     <script src="{% static "mainapp/js/respond.min.js" %}"></script>
     <![endif]-->
 </head>
-  <body>
+  <body  {% block bodytags %} {% endblock %}>
     {% block content %}
     {% endblock %}
 
