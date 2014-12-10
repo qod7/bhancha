@@ -14,9 +14,9 @@
 		<tr>
 			<td>{{forloop.counter}}</td>
 			<td>{{order.customer}}</td>
-			<td>{{order.dish}}</td>
+			<td>{{order.dish.food.image.showimg}}</td>
 			<td>{{order.quantity}}</td>
-			<td>{{order.status}}</td>
+			<td>{{order.get_status_display}}</td>
 		</tr>
 	{% endfor %}
 </table>
