@@ -1,5 +1,5 @@
 {% extends "mainapp/home.html" %}
-
+{% load humanize %}
 {% block page %}
 <!-- Table starts -->
 <table class="table table-striped table-bordered table-condensed col-sm-10 col-md-offset-1">
@@ -8,6 +8,7 @@
         <th>Customer</th>
         <th>Dish</th>
         <th>Quantity</th>
+        <th>Ordered Time</th>
         <th>Status</th>
     </tr>
     {% for order in orders %}
@@ -16,6 +17,7 @@
             <td class="text-center"><strong>{{order.customer}}</strong></td>
             <td class="text-center"><strong>{{ order.dish.food.image.showimage | safe}}</td>
             <td class="text-center"><strong>{{order.quantity}}</strong></td>
+            <td class="text-center"><strong>{{order.order_placed | naturaltime}}</strong></td>
             <td class="text-center"><strong>{{order.get_status_display}}</strong></td>
         </tr>
     {% endfor %}
