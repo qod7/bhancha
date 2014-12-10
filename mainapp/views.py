@@ -18,7 +18,17 @@ def generateprofilepic(email):
 
 # Create your views here.
 def login(request):
-    return render(request, 'mainapp/login.html')
+    if(request.method=='GET'):
+        return render(request, 'mainapp/login.html')
+    else:
+        username=request.POST['username']
+        password=request.POST['password']
+        user=auth.authenticate(username=username,password=password)
+        if user is not None:
+            auth.login(request,user)
+            return redirect('home')
+        else:
+            return render(request,'mainapp/login.html',{'message':'Invalid login'})
 
 
 def signup(request):
