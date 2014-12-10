@@ -25,8 +25,11 @@ def login(request):
         password=request.POST['password']
         user=auth.authenticate(username=username,password=password)
         if user is not None:
-            auth.login(request,user)
-            return redirect('home')
+            if(CookInfo.objects.filter(cook_id=user.id).count()>0):
+                auth.login(request,user)
+                return redirect('home')
+            else:
+                return render(request,'mainapp/login.html',{'message':'Cook not found'})
         else:
             return render(request,'mainapp/login.html',{'message':'Invalid login'})
 
