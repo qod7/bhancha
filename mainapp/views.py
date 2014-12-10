@@ -9,6 +9,13 @@ from mainapp.models import Media, Food, Dish, CookInfo, Order
 from mainapp.models import Session
 import json
 
+
+def generateprofilepic(email):
+    import hashlib
+    m = hashlib.md5()
+    m.update(email.encode("utf-8"))
+    return m.hexdigest()
+
 # Create your views here.
 def login(request):
     return render(request, 'mainapp/login.html')
@@ -187,7 +194,8 @@ def logincheck(request):
         "name": user.first_name+" "+user.last_name,
         "email": user.email,
         "username": user.username,
-        "tag": session.sessionid
+        "tag": session.sessionid,
+        "profile_picture": generateprofilepic(user.email)
         }
     return HttpResponse(json.dumps(output))
 
@@ -198,7 +206,8 @@ def sessioncheck(request):
     try:
         session = Session.objects.get(sessionid=sessionid)
     except:
-        raise Http404  # Show error in case of error
+        output = {"login": "no"}
+        return HttpResponse(json.dumps(output))
 
     user = session.user
     output = {
@@ -206,7 +215,8 @@ def sessioncheck(request):
         "name": user.first_name+" "+user.last_name,
         "email": user.email,
         "username": user.username,
-        "tag": session.sessionid
+        "tag": session.sessionid,
+        "profile_picture": generateprofilepic(user.email)
         }
     return HttpResponse(json.dumps(output))
 
