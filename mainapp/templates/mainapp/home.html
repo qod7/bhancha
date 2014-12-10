@@ -32,6 +32,7 @@
         </div>
     </header>
     <!--header end-->
+
     <!--sidebar start-->
     <aside>
         <div id="sidebar"  class="nav-collapse ">
@@ -60,6 +61,7 @@
         </div>
     </aside>
     <!--sidebar end-->
+
     <!--main content start-->
     <section id="main-content">
         <section class="wrapper site-min-height">
@@ -87,6 +89,8 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal end -->
+
             {% block page %}
             <!-- page start-->
             <form class="form-horizontal col-sm-6 col-sm-offset-3" role="form" action="{% url 'home' %}" method="POST">
@@ -109,9 +113,11 @@
             </form>
             <!-- page end-->
             {% endblock %}
+
         </section>
     </section>
     <!--main content end-->
+
     <!--footer start-->
     <footer class="site-footer">
         <div class="text-center">
@@ -122,5 +128,23 @@
         </div>
     </footer>
     <!--footer end-->
-    </section>
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    setInterval(function(){ 
+        var request=$.ajax({
+        url: "",
+        type: "POST",
+        data: {'id':{{user.id}} },
+        success: function (data)
+        {
+            var obj=$.parseJSON(data);
+            // Do something
+        }
+    });
+    }, 3000);
+</script>
 {% endblock %}
