@@ -334,5 +334,6 @@ def vieworders(request):
     orders = Order.objects.filter(dish__cook=cook)
     if orders.count() > 0:
         order = orders[0]
-        return HttpResponse(json.dumps({"status": "success", 'hasorder': True, 'order_no': order.pk}))
+        data= "Order for <strong> "+str(order.quantity)+"</strong> "+order.dish.food.name
+        return HttpResponse(json.dumps({"status": "success", 'hasorder': True, 'order_no': order.pk, 'data':data}))
     return HttpResponse(json.dumps({"status": "success", 'hasorder': False}))
