@@ -32,6 +32,7 @@
         </div>
     </header>
     <!--header end-->
+
     <!--sidebar start-->
     <aside>
         <div id="sidebar"  class="nav-collapse ">
@@ -60,9 +61,36 @@
         </div>
     </aside>
     <!--sidebar end-->
+
     <!--main content start-->
     <section id="main-content">
         <section class="wrapper site-min-height">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#notification">
+                Launch
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">Notification!</h4>
+                        </div>
+                        <div class="modal-body" id="modelcontent">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default">Close</button>
+                            <button type="button" class="btn btn-primary">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal end -->
+
             {% block page %}
             <!-- page start-->
             <form class="form-horizontal col-sm-6 col-sm-offset-3" role="form" action="{% url 'home' %}" method="POST">
@@ -85,18 +113,38 @@
             </form>
             <!-- page end-->
             {% endblock %}
+
         </section>
     </section>
     <!--main content end-->
+
     <!--footer start-->
     <footer class="site-footer">
         <div class="text-center">
-            2013 &copy; FlatLab by VectorLab.
+            &copy; Bhancha.
             <a href="#" class="go-top">
                 <i class="icon-angle-up"></i>
             </a>
         </div>
     </footer>
     <!--footer end-->
-    </section>
+
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    setInterval(function(){ 
+        var request=$.ajax({
+        url: "",
+        type: "POST",
+        data: {'id':{{user.id}} },
+        success: function (data)
+        {
+            var obj=$.parseJSON(data);
+            // Do something
+        }
+    });
+    }, 3000);
+</script>
 {% endblock %}
