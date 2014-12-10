@@ -319,3 +319,17 @@ def browseorder(request):
             orderinfo["ordered"] = orderinfo["ordered"].replace("\u00a0"," ")
         output.append(orderinfo)
     return HttpResponse(json.dumps(output))
+
+def vieworders(request):
+    try:
+        cookid = request.GET.get("cookid")
+        cook = User.objects.get(pk=cookid)
+        cookinfo = CookInfo.objects.get(cook=cook)
+    except:
+        return HttpResponse(json.dumps({"status": "error"}))
+    # Search the latest orders for the cook that have not yet been processed
+    orders = Order.objects.filter(dish__cook=cook)
+    if orders.count() > 0:
+        order = orders[0]
+        return HttpResponse(json.dumps({"status": "success", 'hasorder': True, 'order_no': order.pk}))
+    return HttpResponse(json.dumps({"status": "success", 'hasorder': False}))
