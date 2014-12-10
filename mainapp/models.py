@@ -28,6 +28,7 @@ class Media(models.Model):
         width, height = image.size
         if height > width:
             ratio = height/width
+
             image.thumbnail((200, 200*ratio), Image.ANTIALIAS)
         else:
             ratio = width/height
@@ -117,7 +118,7 @@ class Order(models.Model):
                               choices=ORDER_STATUS,
                               default=ORDERED)
 
-    accepted = models.BooleanField(blank=True)
+    accepted = models.NullBooleanField(blank=True)
     order_placed = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
