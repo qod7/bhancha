@@ -81,9 +81,9 @@
                         </div>
                         <div class="modal-footer">
                             <form action="" method="GET">
-                                <input type="hidden" name="cook_id" value="" id="cook_id">
-                                <button type="submit" name="action" value="reject" class="btn btn-default">Reject</button>
-                                <button type="submit" name="action" value="accept" class="btn btn-primary">Accept</button>
+                                <input type="hidden" name="orderid" value="" id="orderid">
+                                <button type="submit" name="accepted" value="False" class="btn btn-default">Reject</button>
+                                <button type="submit" name="accepted" value="True" class="btn btn-primary">Accept</button>
                             </form>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
             var obj=$.parseJSON(data);
             if(obj.status=="success")
             {
-                $("#cook_id").val(obj.order_no);
+                $("#orderid").val(obj.order_no);
                 $("#modelcontent").html(obj.data);
                 $('#notification').modal('show');
             }
