@@ -252,14 +252,14 @@ def makeorder(request):
         cook = User.objects.get(pk=cookid)
         cookinfo = CookInfo.objects.get(cook=cook)
         if cookinfo.status == CookInfo.BUSY:
-            return HttpResponse("BUSYCOOK")
+            return HttpResponse(json.dumps({"status": "BUSYCOOK"}))
     except:
-        return HttpResponse("NOCOOK")
+        return HttpResponse(json.dumps({"status": "NOCOOK"}))
     try:
         foodid = request.GET.get("foodid")
         food = Food.objects.get(pk=foodid)
     except:
-        return HttpResponse("NOFOOD")
+        return HttpResponse(json.dumps({"status": "NOFOOD"}))
 
     quantity = request.GET.get("quantity",1)
     quantity = int(quantity)
@@ -268,19 +268,19 @@ def makeorder(request):
     try:
         dish = Dish.objects.get(cook=cook, food=food)
     except:
-        return HttpResponse("NODISH")
+        return HttpResponse(json.dumps({"status": "NODISH"}))
     #Create a order for it
     try:
         from datetime import datetime, timedelta
         message_interval = timedelta(seconds=60)
         # find older order with similar specifications
         if Order.objects.filter(customer=user, dish=dish, quantity=quantity,order_placed__gte = datetime.now() - message_interval).count() > 0:
-            return HttpResponse("DELAY")
+            return HttpResponse(json.dumps({"status": "DELAY"}))
         neworder = Order(customer=user, dish=dish, quantity=quantity)
         neworder.save()
     except:
-        return HttpResponse("ORDERROR")
-    return HttpResponse("YES")
+        return HttpResponse(json.dumps({"status": "ORDERROR"}))
+    return HttpResponse(json.dumps({"status": "YES"}))
 
 
 
@@ -322,3 +322,17 @@ def browseorder(request):
             orderinfo["ordered"] = orderinfo["ordered"].replace("\u00a0"," ")
         output.append(orderinfo)
     return HttpResponse(json.dumps(output))
+
+def vieworders(request):
+    try:
+        cookid = request.GET.get("cookid")
+        cook = User.objects.get(pk=cookid)
+        cookinfo = CookInfo.objects.get(cook=cook)
+    except:
+        return HttpResponse(json.dumps({"status": "error"}))
+    # Search the latest orders for the cook that have not yet been processed
+    orders = Order.objects.filter(dish__cook=cook)
+    if orders.count() > 0:
+        order = orders[0]
+        return HttpResponse(json.dumps({"status": "success", 'hasorder': True, 'order_no': order.pk}))
+    return HttpResponse(json.dumps({"status": "success", 'hasorder': False}))
