@@ -77,7 +77,7 @@ def dishes(request):
             else:
                 dish.enabled=False
             dish.save()
-            
+
         return redirect('dishes')
 
 def orders(request):
@@ -235,15 +235,51 @@ def makeorder(request):
     sessionid = request.GET.get("tag", False)
     if sessionid is False:
         raise Http404
+
     try:
         session = Session.objects.get(sessionid=sessionid)
     except:
-        raise Http404  # Show error in case of error
+        raise Http404
 
     user = session.user
 
     # Now try to get the food and cook ID
-    return HttpResponse("Hello world")
+    try:
+        cookid = request.GET.get("cookid")
+        cook = User.objects.get(pk=cookid)
+        cookinfo = CookInfo.objects.get(cook=cook)
+        if cookinfo.status == CookInfo.BUSY:
+            return HttpResponse("BUSYCOOK")
+    except:
+        return HttpResponse("NOCOOK")
+    try:
+        foodid = request.GET.get("foodid")
+        food = Food.objects.get(pk=foodid)
+    except:
+        return HttpResponse("NOFOOD")
+
+    quantity = request.GET.get("quantity",1)
+    quantity = int(quantity)
+
+    # Try to find dish of that cook and food
+    try:
+        dish = Dish.objects.get(cook=cook, food=food)
+    except:
+        return HttpResponse("NODISH")
+    #Create a order for it
+    try:
+        from datetime import datetime, timedelta
+        message_interval = timedelta(seconds=60)
+        # find older order with similar specifications
+        if Order.objects.filter(customer=user, dish=dish, quantity=quantity,order_placed__gte = datetime.now() - message_interval).count() > 0:
+            return HttpResponse("DELAY")
+        neworder = Order(customer=user, dish=dish, quantity=quantity)
+        neworder.save()
+    except:
+        return HttpResponse("ORDERROR")
+    return HttpResponse("YES")
+
+
 
 def browseorder(request):
     # I have used the following lines of code 3 times in this view.
