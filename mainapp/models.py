@@ -66,6 +66,7 @@ class Dish(models.Model):
     cook = models.ForeignKey(User)
     food = models.ForeignKey(Food)
     enabled = models.BooleanField(default=False)
+    price = models.IntegerField(default=100)
 
     def __str__(self):
         return self.food.name+" by "+self.cook.first_name+" "+self.cook.last_name
