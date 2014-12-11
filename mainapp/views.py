@@ -25,8 +25,11 @@ def login(request):
         password=request.POST['password']
         user=auth.authenticate(username=username,password=password)
         if user is not None:
-            auth.login(request,user)
-            return redirect('home')
+            if(CookInfo.objects.filter(cook_id=user.id).count()>0):
+                auth.login(request,user)
+                return redirect('home')
+            else:
+                return render(request,'mainapp/login.html',{'message':'Cook not found'})
         else:
             return render(request,'mainapp/login.html',{'message':'Invalid login'})
 
@@ -401,7 +404,8 @@ def vieworders(request):
     orders = Order.objects.filter(dish__cook=cook)
     if orders.count() > 0:
         order = orders[0]
-        return HttpResponse(json.dumps({"status": "success", 'hasorder': True, 'order_no': order.pk}))
+        data= "Order for <strong> "+str(order.quantity)+"</strong> "+order.dish.food.name
+        return HttpResponse(json.dumps({"status": "success", 'hasorder': True, 'order_no': order.pk, 'data':data}))
     return HttpResponse(json.dumps({"status": "success", 'hasorder': False}))
 
 

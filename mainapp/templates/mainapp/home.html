@@ -80,8 +80,11 @@
                         <div class="modal-body" id="modelcontent">
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default">Close</button>
-                            <button type="button" class="btn btn-primary">Accept</button>
+                            <form action="" method="GET">
+                                <input type="hidden" name="orderid" value="" id="orderid">
+                                <button type="submit" name="accepted" value="False" class="btn btn-default">Reject</button>
+                                <button type="submit" name="accepted" value="True" class="btn btn-primary">Accept</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -133,13 +136,18 @@
 <script type="text/javascript">
     setInterval(function(){ 
         var request=$.ajax({
-        url: "",
-        type: "POST",
-        data: {'id':{{user.id}} },
+        url: "{% url 'vieworders' %}",
+        type: "GET",
+        data: {'cookid':{{user.id}} },
         success: function (data)
         {
             var obj=$.parseJSON(data);
-            // Do something
+            if(obj.status=="success")
+            {
+                $("#orderid").val(obj.order_no);
+                $("#modelcontent").html(obj.data);
+                $('#notification').modal('show');
+            }
         }
     });
     }, 3000);
