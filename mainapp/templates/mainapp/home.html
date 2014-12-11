@@ -80,7 +80,7 @@
                         <div class="modal-body" id="modelcontent">
                         </div>
                         <div class="modal-footer">
-                            <form action="" method="GET">
+                            <form action="{% url 'processorder' %}" method="GET">
                                 <input type="hidden" name="orderid" value="" id="orderid">
                                 <button type="submit" name="accepted" value="False" class="btn btn-default">Reject</button>
                                 <button type="submit" name="accepted" value="True" class="btn btn-primary">Accept</button>
