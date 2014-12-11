@@ -142,7 +142,7 @@
         success: function (data)
         {
             var obj=$.parseJSON(data);
-            if(obj.status=="success")
+            if(obj.hasorder==true)
             {
                 $("#orderid").val(obj.order_no);
                 $("#modelcontent").html(obj.data);
