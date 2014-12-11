@@ -401,7 +401,7 @@ def vieworders(request):
     except:
         return HttpResponse(json.dumps({"status": "error"}))
     # Search the latest orders for the cook that have not yet been processed
-    orders = Order.objects.filter(dish__cook=cook)
+    orders = Order.objects.filter(dish__cook=cook, accepted = None)
     if orders.count() > 0:
         order = orders[0]
         data= "Order for <strong> "+str(order.quantity)+"</strong> "+order.dish.food.name
@@ -426,5 +426,6 @@ def processorder(request):
         order.save()
     except:
         return HttpResponse(json.dumps({"status": "error"}))
+    return redirect("home")
     return HttpResponse(json.dumps({"status": "changed"}))
 
