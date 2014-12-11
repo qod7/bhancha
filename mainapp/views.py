@@ -34,8 +34,78 @@ def login(request):
             return render(request,'mainapp/login.html',{'message':'Invalid login'})
 
 
+class SignupForm(forms.Form):
+    name = forms.CharField(
+        required=True,
+        max_length = 20,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Full Name'
+            },
+        ),
+        error_messages={'required': "You must enter your Full Name."}
+    )
+
+    username = forms.CharField(
+        required=True,
+        min_length=5,
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Username'
+            },
+        ),
+        error_messages={'required': "You must enter a Username."}
+    )
+
+    password = forms.CharField(
+        required=True,
+        min_length=5,
+        max_length=20,
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+            },
+        ),
+        error_messages={'required': "You must enter a Password."}
+    )
+
+    email = forms.EmailField(
+        label='Your Email',
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Email Address'
+            },
+        ),
+        error_messages={'required': "You must enter a valid Email Address."}
+    )
+
 def signup(request):
-    return render(request,'mainapp/signup.html',{'form':form})
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        # if the form is good
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+
+            # check if the username or email is already registered
+            user = auth.models.User.objects.create_user(username, email, password)
+            user.first_name=name
+            user.save()
+
+            form = SignupForm()
+            user = auth.authenticate(username=username, password=password)
+            return redirect('home')
+    else:
+        defaultemail = request.GET.get('email', '')
+        form = SignupForm(initial={'email': defaultemail})
+    return render(request, 'mainapp/signup.html', {'form': form})
 
 def index(request):
     if(request.method== 'GET'):
@@ -337,3 +407,24 @@ def vieworders(request):
         data= "Order for <strong> "+str(order.quantity)+"</strong> "+order.dish.food.name
         return HttpResponse(json.dumps({"status": "success", 'hasorder': True, 'order_no': order.pk, 'data':data}))
     return HttpResponse(json.dumps({"status": "success", 'hasorder': False}))
+
+
+def processorder(request):
+    if not request.user.is_authenticated():
+        return HttpResponse(json.dumps({"status": "NOUSER"}))
+    try:
+        orderid = request.GET.get("orderid")
+        order = Order.objects.get(pk=orderid)
+        if order.dish.cook != request.user:
+            return HttpResponse(json.dumps({"status": "INVALIDUSER"}))
+
+        status = request.GET.get("accepted")
+        if status.upper() == "TRUE":
+            order.accepted = True
+        else:
+            order.accepted = False
+        order.save()
+    except:
+        return HttpResponse(json.dumps({"status": "error"}))
+    return HttpResponse(json.dumps({"status": "changed"}))
+

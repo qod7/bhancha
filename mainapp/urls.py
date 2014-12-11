@@ -18,4 +18,5 @@ urlpatterns = patterns('',
         url(r'^browse_cook$', views.browsecook, name='browsecook'),
         url(r'^browse_order$', views.browseorder, name='browseorder'),
         url(r'^view_orders/$', views.vieworders, name='vieworders'),
+        url(r'^processorder/$', views.processorder, name='processorder'),
         )
